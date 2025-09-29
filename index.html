@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://formspree.io; img-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <title>RedStocks – Autonomous Investment Agents</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        :root {
+            --dark-charcoal: #212529;
+            --slate-blue: #003F5C;
+            --slate-blue-darker: #002c40;
+            --light-gray: #F8F9FA;
+            --medium-gray: #E9ECEF;
+            --border-gray: #DEE2E6;
+            --text-gray: #6C757D;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-charcoal);
+            background-color: var(--white);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 120px 0; }
+        
+        h1, h2, h3 { font-family: 'Lora', serif; font-weight: 600; line-height: 1.3; margin-bottom: 20px; color: var(--dark-charcoal); }
+        h1 { font-size: clamp(2.8rem, 5vw, 4rem); }
+        h2 { font-size: clamp(2.2rem, 4vw, 3rem); }
+        h3 { font-size: 1.5rem; }
+        p { margin-bottom: 20px; color: var(--text-gray); max-width: 600px; }
+        a { text-decoration: none; color: var(--slate-blue); transition: color 0.3s ease; }
+        a:hover { color: var(--dark-charcoal); }
+
+        .btn { display: inline-block; padding: 14px 32px; border-radius: 4px; font-weight: 500; text-align: center; cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent; }
+        .btn-primary { background-color: var(--slate-blue); color: var(--white); border-color: var(--slate-blue); }
+        .btn-primary:hover { background-color: var(--slate-blue-darker); border-color: var(--slate-blue-darker); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: var(--white); }
+        .text-center { text-align: center; }
+        .text-center p { margin-left: auto; margin-right: auto; }
+
+        /* Header */
+        header { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); z-index: 1000; border-bottom: 1px solid transparent; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+        header.scrolled { border-color: var(--medium-gray); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
+        .logo { font-family: 'Lora', serif; font-size: 1.8rem; font-weight: 600; color: var(--dark-charcoal); }
+        .nav-links { display: flex; list-style: none; align-items: center; gap: 40px; }
+        .nav-links a { font-weight: 500; color: var(--dark-charcoal); }
+        .nav-links a.btn-primary { color: var(--white); }
+        
+        /* Mobile Navigation */
+        .mobile-menu-btn { display: none; cursor: pointer; z-index: 1001; }
+        .mobile-menu-btn .bar { display: block; width: 25px; height: 3px; margin: 5px auto; background-color: var(--dark-charcoal); transition: all 0.3s ease-in-out; }
+        .mobile-nav { position: fixed; top: 0; right: -100%; width: min(75vw, 400px); height: 100vh; background-color: var(--white); box-shadow: -5px 0 15px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; transition: right 0.3s ease-in-out; z-index: 1000; }
+        .mobile-nav.active { right: 0; }
+        .mobile-nav ul { list-style: none; text-align: center; }
+        .mobile-nav li { margin: 25px 0; }
+        .mobile-nav a { font-size: 1.5rem; font-family: 'Lora', serif; }
+
+        /* Hero Section */
+        .hero { padding-top: 200px; padding-bottom: 150px; display: flex; align-items: center; min-height: 100vh; position: relative; overflow: hidden; }
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .hero-content { max-width: 700px; }
+        .hero p { font-size: 1.1rem; color: #495057; }
+
+        /* Section Title */
+        .section-title { text-align: center; margin-bottom: 80px; }
+        .section-title h2 { margin-bottom: 15px; }
+        .section-title p { max-width: 700px; margin: 0 auto; }
+
+        /* Principles Section */
+        .principles { background-color: var(--light-gray); }
+        .principles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .principle-card { background-color: var(--white); padding: 40px; border: 1px solid var(--border-gray); border-radius: 4px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .principle-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .principle-icon { font-size: 2rem; color: var(--slate-blue); margin-bottom: 20px; }
+        .principle-card h3 { font-size: 1.3rem; }
+        
+        /* Process Section */
+        .process-wrapper { display: flex; gap: 80px; }
+        .process-sticky-title { width: 30%; position: sticky; top: 120px; height: 100%; align-self: flex-start; }
+        .process-sticky-title h2 { font-size: 3rem; }
+        .process-scroll-content { width: 70%; }
+        .process-step { margin-bottom: 100px; }
+        .process-step:last-child { margin-bottom: 0; }
+        .step-number { font-family: 'Roboto Mono', monospace; font-size: 1rem; color: var(--slate-blue); margin-bottom: 15px; }
+        .step-content h3 { font-size: 1.8rem; }
+        
+        /* Security Section */
+        .security-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .security-card { text-align: center; }
+        .security-icon { font-size: 2.5rem; color: var(--slate-blue); margin-bottom: 20px; }
+        .security-card h3 { font-size: 1.3rem; }
+
+        /* Research Section */
+        .research { background-color: var(--light-gray); }
+        .research-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .research-card { background: var(--white); border: 1px solid var(--border-gray); border-radius: 4px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; }
+        .research-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .research-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
+        .research-content h3 { font-size: 1.3rem; }
+        .research-content p { font-size: 0.95rem; flex-grow: 1; }
+        .read-more-link { font-weight: 600; display: inline-block; margin-top: auto; }
+
+        /* Testimonials Section */
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .testimonial-card { background-color: var(--light-gray); padding: 40px; border-radius: 4px; border-left: 4px solid var(--slate-blue); }
+        .testimonial-text { font-style: italic; margin-bottom: 25px; }
+        .testimonial-author { font-weight: 600; }
+        .testimonial-author span { font-weight: 400; color: var(--text-gray); }
+
+        /* CTA Section & Contact Form */
+        .cta-section { background-color: var(--dark-charcoal); color: var(--white); padding: 100px 40px; text-align: center; }
+        .cta-section h2 { color: var(--white); }
+        .cta-section p { color: var(--medium-gray); max-width: 600px; margin: 0 auto 30px auto; }
+        .contact-form { max-width: 700px; margin: 40px auto 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .contact-form .form-group { display: flex; gap: 20px; }
+        .contact-form .form-group input { width: 50%; }
+        .contact-form input,
+        .contact-form textarea { width: 100%; padding: 15px; border-radius: 4px; border: 1px solid var(--border-gray); background-color: var(--white); font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--dark-charcoal); }
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder { color: var(--text-gray); }
+        .contact-form button { width: fit-content; align-self: center; border: none; }
+
+        /* Footer */
+        footer { padding: 60px 0; background-color: var(--light-gray); text-align: center; }
+        .footer-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
+        .footer-links { display: flex; gap: 30px; list-style: none; flex-wrap: wrap; justify-content: center;}
+        .footer-links a { color: var(--text-gray); }
+        .copyright { font-size: 0.9rem; color: var(--text-gray); }
+        .disclaimer { font-size: 0.85rem; color: var(--text-gray); max-width: 800px; margin-top: 15px; }
+
+        /* Animation */
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .principles-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            section { padding: 80px 0; }
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .research-grid, .security-grid { grid-template-columns: 1fr; }
+            .process-wrapper { flex-direction: column; gap: 30px; }
+            .process-sticky-title { width: 100%; position: static; text-align: center; }
+            .process-sticky-title h2 { font-size: 2.5rem; }
+            .process-scroll-content { width: 100%; }
+            .process-step { margin-bottom: 60px; }
+            .contact-form .form-group { flex-direction: column; }
+            .contact-form .form-group input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">RedStocks</a>
+                <ul class="nav-links">
+                    <li><a href="philosophy.html">Philosophy</a></li>
+                    <li><a href="#security">Security</a></li>
+                    <li><a href="#process">Process</a></li>
+                    <li><a href="#research">Insights</a></li>
+                    <li><a href="#contact" class="btn btn-primary">Contact Us</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="mobile-nav">
+        <ul>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#research">Insights</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <canvas id="hero-canvas"></canvas>
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Delegate to Intelligence. Autonomous Alpha.</h1>
+                    <p>Deploy a self-directing AI agent to navigate market complexity. We provide the autonomous technology to execute sophisticated quantitative strategies on your behalf, secured with institutional-grade protocols.</p>
+                    <a href="#philosophy" class="btn btn-primary">Explore Our Approach</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="principles" id="philosophy">
+            <div class="container">
+                <div class="section-title fade-in">
+                    <h2>Our Core Directives</h2>
+                    <p>Our agents are built on a foundation of discipline, transparency, and relentless technological advancement, designed to operate with pure rationality in complex market environments.</p>
+                </div>
+                <div class="principles-grid">
+                    <div class="principle-card fade-in" style="transition-delay: 100ms;"><div class="principle-icon"><i class="fas fa-brain"></i></div><h3>Autonomous Operation</h3><p>Our agents operate independently on a foundation of quantitative research, executing strategies with unwavering discipline, free from human emotional bias.</p></div>
+                    <div class="principle-card fade-in" style="transition-delay: 200ms;"><div class="principle-icon"><i class="fas fa-shield-alt"></i></div><h3>Integrated Risk Management</h3><p>Capital preservation is a core directive. Each agent employs a multi-layered risk framework that governs every aspect of its operation.</p></div>
+                    <div class="principle-card fade-in" style="transition-delay: 300ms;"><div class="principle-icon"><i class="fas fa-lock"></i></div><h3>Institutional-Grade Security</h3><p>Protecting client data is paramount. We employ end-to-end encryption and bank-grade security protocols to ensure complete confidentiality.</p></div>
+                    <div class="principle-card fade-in" style="transition-delay: 400ms;"><div class="principle-icon"><i class="fas fa-search"></i></div><h3>Radical Transparency</h3><p>Our Glass Box™ approach, grounded in Explainable AI, ensures every recommendation is clear and understandable. You always know the 'why' behind your strategy.</p></div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="security" id="security">
+             <div class="container">
+                <div class="section-title fade-in">
+                    <h2>A Security-First Architecture</h2>
+                    <p>We understand that trust is earned through rigorous security. Our platform is engineered from the ground up to protect your data and privacy with institutional-grade standards.</p>
+                </div>
+                <div class="security-grid">
+                    <div class="security-card fade-in">
+                        <div class="security-icon"><i class="fas fa-database"></i></div>
+                        <h3>End-to-End Encryption</h3>
+                        <p>All data, both in transit and at rest, is secured using AES-256 bank-grade encryption.</p>
+                    </div>
+                    <div class="security-card fade-in" style="transition-delay: 150ms;">
+                        <div class="security-icon"><i class="fas fa-server"></i></div>
+                        <h3>Data Isolation</h3>
+                        <p>Your financial data is logically and physically isolated in a secure, single-tenant architecture.</p>
+                    </div>
+                    <div class="security-card fade-in" style="transition-delay: 300ms;">
+                        <div class="security-icon"><i class="fas fa-user-secret"></i></div>
+                        <h3>Strict Access Control</h3>
+                        <p>We adhere to the principle of least privilege, ensuring only necessary personnel can access critical systems.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="process" id="process">
+            <div class="container">
+                <div class="process-wrapper">
+                    <div class="process-sticky-title fade-in">
+                        <h2>Deployment Process</h2>
+                    </div>
+                    <div class="process-scroll-content">
+                        <div class="process-step fade-in">
+                            <div class="step-number">01</div>
+                            <div class="step-content">
+                                <h3>Mandate Definition</h3>
+                                <p>We begin with a comprehensive understanding of your financial objectives and risk tolerance to establish a clear, actionable mandate for your agent.</p>
+                            </div>
+                        </div>
+                        <div class="process-step fade-in">
+                            <div class="step-number">02</div>
+                            <div class="step-content">
+                                <h3>Agent Configuration</h3>
+                                <p>Based on your mandate, our system configures and calibrates a bespoke investment agent designed to pursue your objectives within defined parameters.</p>
+                            </div>
+                        </div>
+                        <div class="process-step fade-in">
+                            <div class="step-number">03</div>
+                            <div class="step-content">
+                                <h3>Autonomous Mandate Execution</h3>
+                                <p>Your agent operates autonomously, continuously analyzing market data to manage risk and rebalance assets in strict alignment with your long-term goals.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="research" id="research">
+            <div class="container">
+                <div class="section-title fade-in">
+                    <h2>Research & Insights</h2>
+                    <p>Our commitment to rigorous research is the cornerstone of our agent development process. We regularly publish our findings on market dynamics and quantitative finance.</p>
+                </div>
+                <div class="research-grid">
+                    <div class="research-card fade-in">
+                        <div class="research-content">
+                           <h3>On Alpha Decay in Volatile Markets</h3>
+                           <p>An analysis of signal efficacy and strategy adaptation during periods of high market turbulence.</p>
+                           <a href="#" class="read-more-link" rel="noopener noreferrer">Read White Paper &rarr;</a>
+                        </div>
+                    </div>
+                     <div class="research-card fade-in">
+                        <div class="research-content">
+                           <h3>Systemic Risk Modeling with Advanced Architectures</h3>
+                           <p>Exploring the use of novel AI to map and predict contagion effects within complex financial networks.</p>
+                           <a href="#" class="read-more-link" rel="noopener noreferrer">Read White Paper &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-title fade-in">
+                    <h2>Trusted by Early Adopters</h2>
+                    <p>See what our users are saying about their experience with RedStocks.</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card fade-in">
+                        <p class="testimonial-text">"RedStocks has completely transformed how I approach investing. The AI insights have helped me make more informed decisions, and the portfolio optimization is truly next-level."</p>
+                        <p class="testimonial-author">Rajesh Kumar, <span>Early Investor, Mumbai</span></p>
+                    </div>
+                    <div class="testimonial-card fade-in" style="transition-delay: 150ms;">
+                        <p class="testimonial-text">"As someone who's been investing for over a decade, I was skeptical about AI tools. But RedStocks' transparent approach and institutional-grade algorithms won me over."</p>
+                        <p class="testimonial-author">Priya Sharma, <span>Financial Analyst, Delhi</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section" id="contact">
+            <div class="container">
+                <div class="fade-in">
+                    <h2>Schedule a Consultation</h2>
+                    <p>Complete the form below to schedule a confidential consultation. Our team will contact you within one business day to arrange a meeting.</p>
+                    
+                    <form action="https://formspree.io/f/xrbypvan" method="POST" class="contact-form">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Full Name" required autocomplete="off">
+                            <input type="email" name="email" placeholder="Business Email" required autocomplete="off">
+                        </div>
+                        <textarea name="message" placeholder="Please provide a brief overview of your investment objectives..." rows="5" required></textarea>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <ul class="footer-links">
+                    <li><a href="#" rel="noopener noreferrer">Privacy Policy</a></li>
+                    <li><a href="#" rel="noopener noreferrer">Terms of Service</a></li>
+                    <li><a href="#" rel="noopener noreferrer">Disclosures</a></li>
+                </ul>
+                <div class="copyright">&copy; <span id="year"></span> RedStocks. All rights reserved.</div>
+                <div class="disclaimer">
+                    <strong>SEBI Disclaimer:</strong> "RedStocks is in the process of obtaining SEBI Investment Adviser registration. Investment in securities markets is subject to market risks."
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            const mobileNav = document.querySelector('.mobile-nav');
+            menuBtn.addEventListener('click', () => {
+                mobileNav.classList.toggle('active');
+            });
+            document.querySelectorAll('.mobile-nav a').forEach(link => {
+                link.addEventListener('click', () => mobileNav.classList.remove('active'));
+            });
+
+            // Header Scroll Effect
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 50);
+            });
+
+            // Animate on Scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in').forEach(el => { observer.observe(el); });
+
+            // Dynamic Footer Year
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // Hero Canvas Animation
+            const canvas = document.getElementById('hero-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                let mouse = { x: null, y: null };
+
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = canvas.parentElement.offsetHeight;
+                }
+                resizeCanvas();
+
+                const particleConfig = {
+                    count: 80,
+                    speed: 0.1,
+                    color: '#003F5C',
+                    lineWidth: 0.2,
+                    connectDistance: 120,
+                    mouseRadius: 200
+                };
+
+                window.addEventListener('mousemove', (event) => {
+                    mouse.x = event.clientX;
+                    mouse.y = event.clientY;
+                });
+                window.addEventListener('mouseout', () => {
+                    mouse.x = null;
+                    mouse.y = null;
+                });
+
+                class Particle {
+                    constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * particleConfig.speed; this.vy = (Math.random() - 0.5) * particleConfig.speed; this.radius = Math.random() * 1.5 + 0.5; }
+                    update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > canvas.width) this.vx *= -1; if (this.y < 0 || this.y > canvas.height) this.vy *= -1; }
+                    draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = particleConfig.color; ctx.fill(); }
+                }
+
+                function createParticles() {
+                    particles = [];
+                    let count = (canvas.width < 768) ? 40 : particleConfig.count;
+                    for (let i = 0; i < count; i++) { particles.push(new Particle()); }
+                }
+                createParticles();
+                
+                function connectParticles() {
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i; j < particles.length; j++) {
+                            const dist = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+                            let opacity = 1 - dist / particleConfig.connectDistance;
+                            if (opacity > 0) {
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.strokeStyle = `rgba(0, 63, 92, ${opacity})`;
+                                ctx.lineWidth = particleConfig.lineWidth;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    if (mouse.x && mouse.y) {
+                         for (let i = 0; i < particles.length; i++) {
+                            const distToMouse = Math.hypot(particles[i].x - mouse.x, particles[i].y - mouse.y);
+                             if(distToMouse < particleConfig.mouseRadius) {
+                                 let opacity = 1 - distToMouse / particleConfig.mouseRadius;
+                                 ctx.beginPath();
+                                 ctx.moveTo(particles[i].x, particles[i].y);
+                                 ctx.lineTo(mouse.x, mouse.y);
+                                 ctx.strokeStyle = `rgba(0, 63, 92, ${opacity * 0.5})`;
+                                 ctx.lineWidth = particleConfig.lineWidth * 2;
+                                 ctx.stroke();
+                             }
+                         }
+                    }
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => { p.update(); p.draw(); });
+                    connectParticles();
+                    requestAnimationFrame(animate);
+                }
+                animate();
+
+                window.addEventListener('resize', () => {
+                    resizeCanvas();
+                    createParticles();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
